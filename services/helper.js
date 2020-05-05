@@ -1,268 +1,264 @@
 'use strict'
 
 //modulos
-const bcrypt= require('bcrypt-nodejs');
-const User=require('../models/user');
-const fs=require('fs');
+const bcrypt = require('bcrypt-nodejs');
+const User = require('../models/user');
+const fs = require('fs');
 
-const pathfileTRPassword="./data/templateRecoveryPassword.txt";
-const pathfileTRPasswordRandomCode="./data/templateRecoveryPasswordRandomCode.txt";
-const pathfileTPasswordChanged="./data/templatePasswordChanged.txt";
-const cache=require('./cache');
+const pathfileTRPassword = "./data/templateRecoveryPassword.txt";
+const pathfileTRPasswordRandomCode = "./data/templateRecoveryPasswordRandomCode.txt";
+const pathfileTPasswordChanged = "./data/templatePasswordChanged.txt";
+const cache = require('./cache');
 const moment = require('moment-timezone');
 const randomInt = require('random-int');
-const localeService=require('./localeservice');
+const localeService = require('./localeservice');
 
-const appdata = require('../data/appdata');
+const app_env = require('../data/app-env');
+const appdata_prod = require('../data/appdata-prod');
+const appdata_dev = require('../data/appdata-dev');
 var templatePasswordChanged;
 
-function getTemplateRecoveryPassword()
-{
+function getTemplateRecoveryPassword() {
   return new Promise((resolve, reject) => {
-        let template=cache.get(appdata.Cache.keyTemplateRecoveryPassword);
+    let template = cache.get(appdata.Cache.keyTemplateRecoveryPassword);
 
-        if(template)
-        {
-          resolve(template);
+    if (template) {
+      resolve(template);
+    }
+    else {
+      var pathFileTemplate = (appdata.AppConfig.recoveryPasswordRandomCode == true) ? pathfileTRPasswordRandomCode : pathfileTRPassword;
+
+      fs.readFile(pathFileTemplate, (err, data) => {
+        if (err) {
+          reject(err);
         }
-        else
-        {
-          var pathFileTemplate=(appdata.AppConfig.recoveryPasswordRandomCode==true) ? pathfileTRPasswordRandomCode : pathfileTRPassword;
-
-          fs.readFile(pathFileTemplate, (err, data) => {
-              if (err)
-              {
-                reject(err);
-              }
-              else
-              {
-                try {
-                  template=data.toString();
-                  cache.put(appdata.Cache.keyTemplateRecoveryPassword,template);
-                  resolve(template);
-                }
-                catch(error) {
-                  reject(error);
-                }
-              }
-          });
+        else {
+          try {
+            template = data.toString();
+            cache.put(appdata.Cache.keyTemplateRecoveryPassword, template);
+            resolve(template);
+          }
+          catch (error) {
+            reject(error);
+          }
         }
-
-    });
-}
-
-function getTemplatePasswordChanged()
-{
-  return new Promise((resolve, reject) => {
-        let template=cache.get(appdata.Cache.keyTemplatePasswordChanged);
-
-        if(template)
-        {
-          resolve(template);
-        }
-        else
-        {
-          fs.readFile(pathfileTPasswordChanged, (err, data) => {
-              if (err)
-              {
-                reject(err);
-              }
-              else
-              {
-                try {
-                  template=data.toString();
-                  cache.put(appdata.Cache.keyTemplatePasswordChanged,template);
-                  resolve(template);
-                }
-                catch(error) {
-                  reject(error);
-                }
-              }
-          });
-        }
-
-    });
-}
-
-function getAppData()
-{
-  return appdata;
-}
-
-function getResponse(code,message,data,locale)
-{
-  var response={};
-
-  response.code=code;
-  response.message=(locale?localeService.translate(message,locale):message);
-
-  response.data={};
-  if(data){response.data=data;}
-
-  return response;
-}
-
-function getResponseOk(message,data,locale)
-{
-  var response={};
-
-  response.code=appdata.AppConfig.codeOk;
-  response.message=(locale?localeService.translate(message,locale):message);
-  response.data={};
-  if(data){response.data=data;}
-
-  return response;
-}
-
-function getResponseError(message,data,locale)
-{
-  var response={};
-
-  response.code=appdata.AppConfig.codeError;
-  response.message=(locale?localeService.translate(message,locale):message);
-  response.data={};
-  if(data){response.data=data;}
-
-  return response;
-}
-
-function createUserAdmin()
-{
-  return new Promise((resolve, reject) => {
-     if(!this.getAppData().AppConfig.admin_user.create)
-     {
-       resolve({create:this.getAppData().AppConfig.admin_user.create,
-                user:null,
-                message:"Parametro creacion Admin deshabilitado"});
-     }
-     else
-     {
-       var user = new User();
-       user.name=this.getAppData().AppConfig.admin_user.name;
-       user.surname=this.getAppData().AppConfig.admin_user.surname;
-       user.email=this.getAppData().AppConfig.admin_user.email;
-       user.role=this.getAppData().AppConfig.admin_user.role;
-       user.image=this.getAppData().AppConfig.admin_user.image;
-
-       User.findOne({email:user.email.toLowerCase()},(err,userFound)=>{
-         if(err)
-         {
-           reject({create:this.getAppData().AppConfig.admin_user.create,
-                    user:null,
-                    message:"Error al intentar buscar usuario admin: "+err});
-         }
-         else
-         {
-            if(userFound)
-            {
-              resolve({create:this.getAppData().AppConfig.admin_user.create,
-                       user:userFound,
-                       message:"Usuario Admin ya existe en BD"});
-            }
-            else
-            {
-              bcrypt.hash(this.getAppData().AppConfig.admin_user.password,null,null,function(err,hash){
-                 user.password=hash;
-                 user.save((err,userStore)=>{
-                   if(err)
-                   {
-                     reject({create:this.getAppData().AppConfig.admin_user.create,
-                              user:null,
-                              message:"Error al guardar el usuario admin: "+err});
-                   }
-                   else
-                   {
-                     if(!userStore)
-                     {
-                       reject({create:this.getAppData().AppConfig.admin_user.create,
-                                user:null,
-                                message:"No se ha registrado el usuario Admin"});
-                     }
-                     else
-                     {
-                       resolve({create:this.getAppData().AppConfig.admin_user.create,
-                                user:userStore,
-                                message:"Usuario Admin creado con exito en BD"});
-                     }
-                   }
-                 });
-              });
-            }
-         }
       });
-
-     }
+    }
 
   });
 }
 
-function getCurrentMoment()
-{
+function getTemplatePasswordChanged() {
+  return new Promise((resolve, reject) => {
+    let template = cache.get(appdata.Cache.keyTemplatePasswordChanged);
+
+    if (template) {
+      resolve(template);
+    }
+    else {
+      fs.readFile(pathfileTPasswordChanged, (err, data) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          try {
+            template = data.toString();
+            cache.put(appdata.Cache.keyTemplatePasswordChanged, template);
+            resolve(template);
+          }
+          catch (error) {
+            reject(error);
+          }
+        }
+      });
+    }
+
+  });
+}
+
+function getAppData() {
+  if (app_env.APP_ENV.ENV === "DEV") {
+    return appdata_dev;
+  }
+  else {
+    return appdata_prod;
+  }
+}
+
+function getResponse(code, message, data, locale) {
+  var response = {};
+
+  response.code = code;
+  response.message = (locale ? localeService.translate(message, locale) : message);
+
+  response.data = {};
+  if (data) { response.data = data; }
+
+  return response;
+}
+
+function getResponseOk(message, data, locale) {
+  var response = {};
+
+  response.code = appdata.AppConfig.codeOk;
+  response.message = (locale ? localeService.translate(message, locale) : message);
+  response.data = {};
+  if (data) { response.data = data; }
+
+  return response;
+}
+
+function getResponseError(message, data, locale) {
+  var response = {};
+
+  response.code = appdata.AppConfig.codeError;
+  response.message = (locale ? localeService.translate(message, locale) : message);
+  response.data = {};
+  if (data) { response.data = data; }
+
+  return response;
+}
+
+function createUserAdmin() {
+  var admin_user = this.getAppData().AppConfig.admin_user;
+
+  return new Promise((resolve, reject) => {
+    try {
+
+      if (!admin_user.create) {
+        resolve({
+          create: admin_user.create,
+          user: null,
+          message: "Parametro creacion Admin deshabilitado"
+        });
+      }
+      else {
+        var user = new User();
+        user.name = admin_user.name;
+        user.surname = admin_user.surname;
+        user.email = admin_user.email;
+        user.role = admin_user.role;
+        user.image = admin_user.image;
+
+        User.findOne({ email: user.email.toLowerCase() }, (err, userFound) => {
+          if (err) {
+            reject({
+              create: admin_user.create,
+              user: null,
+              message: "Error al intentar buscar usuario admin: " + err
+            });
+          }
+          else {
+            if (userFound) {
+              resolve({
+                create: admin_user.create,
+                user: userFound,
+                message: "Usuario Admin ya existe en BD"
+              });
+            }
+            else {
+              bcrypt.hash(admin_user.password, null, null, function (err, hash) {
+                user.password = hash;
+                user.save((err, userStore) => {
+                  if (err) {
+                    reject({
+                      create: admin_user.create,
+                      user: null,
+                      message: "Error al guardar el usuario admin: " + err
+                    });
+                  }
+                  else {
+                    if (!userStore) {
+                      reject({
+                        create: admin_user.create,
+                        user: null,
+                        message: "No se ha registrado el usuario Admin"
+                      });
+                    }
+                    else {
+                      resolve({
+                        create: admin_user.create,
+                        user: userStore,
+                        message: "Usuario Admin creado con exito en BD"
+                      });
+                    }
+                  }
+                });
+              });
+            }
+          }
+        });
+
+      }
+
+    }
+    catch (error) {
+      reject({
+        create: null,
+        user: null,
+        message: "Error en creacion de usuario Admin: "+error
+      });
+    }
+  });
+}
+
+function getCurrentMoment() {
   return moment().tz(this.getAppData().AppConfig.timezone);
 }
 
-function getCurrentMomentWithFeatures()
-{
-  var objectMoment={};
-  objectMoment.moment=moment().tz(this.getAppData().AppConfig.timezone);
-  objectMoment.unix=objectMoment.moment.unix();
-  objectMoment.utc=objectMoment.moment.utc();
+function getCurrentMomentWithFeatures() {
+  var objectMoment = {};
+  objectMoment.moment = moment().tz(this.getAppData().AppConfig.timezone);
+  objectMoment.unix = objectMoment.moment.unix();
+  objectMoment.utc = objectMoment.moment.utc();
 
   return objectMoment;
 }
 
 
-function getCurrentDate()
-{
+function getCurrentDate() {
   return new Date(moment().tz(this.getAppData().AppConfig.timezone).format());
 }
 
-function formatDateToTimeZone(date)
-{
+function formatDateToTimeZone(date) {
   return moment(date).tz(this.getAppData().AppConfig.timezone).format(this.getAppData().AppConfig.formatDate);
   //return moment(date).tz(this.getAppData().AppConfig.timezone).format();
 }
 
-function setAuditDateInEntity(entityToSet,updateDatesOnly)
-{
-  var currentMoment=this.getCurrentMomentWithFeatures();
+function setAuditDateInEntity(entityToSet, updateDatesOnly) {
+  var currentMoment = this.getCurrentMomentWithFeatures();
 
-  if(updateDatesOnly)
-  {
-    entityToSet.updatedDate=currentMoment.moment;
-    entityToSet.updatedUnix=currentMoment.unix;
+  if (updateDatesOnly) {
+    entityToSet.updatedDate = currentMoment.moment;
+    entityToSet.updatedUnix = currentMoment.unix;
   }
-  else
-  {
-    entityToSet.createdDate=currentMoment.moment;
-    entityToSet.createdUnix=currentMoment.unix;
-    entityToSet.updatedDate=null;
-    entityToSet.updatedUnix=null;
+  else {
+    entityToSet.createdDate = currentMoment.moment;
+    entityToSet.createdUnix = currentMoment.unix;
+    entityToSet.updatedDate = null;
+    entityToSet.updatedUnix = null;
   }
 
   return entityToSet;
 }
 
-function randomIntCode(min,max)
-{
+function randomIntCode(min, max) {
   return randomInt(min, max);
 }
 
-function getRecoveryPasswordURL()
-{
+function getRecoveryPasswordURL() {
   return this.getAppData().AppConfig.urlRecoveryPassword;
 }
 
-function getUserWithIdFromRequest(req)
-{
-  var user=new User();
-  user._id=req.user.sub;
+function getUserWithIdFromRequest(req) {
+  var user = new User();
+  user._id = req.user.sub;
 
   return user;
 
 }
 
-module.exports=
+module.exports =
 {
   getResponse,
   getResponseOk,
