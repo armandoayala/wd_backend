@@ -21,23 +21,23 @@ module.exports = {
       maxFiles: "5"
     },
     mail: {
-      service: process.env.EMAIL_SERVICE,
-      user: process.env.EMAIL_USER,
-      password: process.env.EMAIL_PASSWORD
+      service: "gmail",
+      user: "prod.arm85@gmail.com",
+      password: "chespirito78912@."
     },
     admin_user: {
       create: false,
       name: "Administrator",
       surname: "Admin",
-      password: process.env.ADMIN_PASSWORD,
-      email: process.env.ADMIN_EMAIL,
-      role: process.env.ADMIN_ROLE,
+      password: "$00_admin_workdesk_00$",
+      email: "admin@workdesk.com",
+      role: "ROLE_ADMIN",
       image: null
     },
-    urlRecoveryPassword: process.env.URL_RECOVER_PASSWORD
+    urlRecoveryPassword: "http://localhost:4200/changepass"
   },
   AppRole: {
-    Admin: process.env.ADMIN_ROLE
+    Admin: "ROLE_ADMIN"
   },
   AppUserEvent: {
     recoveryPassword: "RECOVERY_PASSWORD"

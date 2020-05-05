@@ -1,6 +1,9 @@
 node_modules/
-logs/
+logs/*.log
+logs/*.gz
+logs/*-audit.json
 uploads/
+data/appdata-dev.js
 token
 .DS_Store
 .idea
