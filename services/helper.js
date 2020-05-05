@@ -20,13 +20,13 @@ var templatePasswordChanged;
 
 function getTemplateRecoveryPassword() {
   return new Promise((resolve, reject) => {
-    let template = cache.get(appdata.Cache.keyTemplateRecoveryPassword);
+    let template = cache.get(this.getAppData().Cache.keyTemplateRecoveryPassword);
 
     if (template) {
       resolve(template);
     }
     else {
-      var pathFileTemplate = (appdata.AppConfig.recoveryPasswordRandomCode == true) ? pathfileTRPasswordRandomCode : pathfileTRPassword;
+      var pathFileTemplate = (this.getAppData().AppConfig.recoveryPasswordRandomCode == true) ? pathfileTRPasswordRandomCode : pathfileTRPassword;
 
       fs.readFile(pathFileTemplate, (err, data) => {
         if (err) {
@@ -35,7 +35,7 @@ function getTemplateRecoveryPassword() {
         else {
           try {
             template = data.toString();
-            cache.put(appdata.Cache.keyTemplateRecoveryPassword, template);
+            cache.put(this.getAppData().Cache.keyTemplateRecoveryPassword, template);
             resolve(template);
           }
           catch (error) {
@@ -50,7 +50,7 @@ function getTemplateRecoveryPassword() {
 
 function getTemplatePasswordChanged() {
   return new Promise((resolve, reject) => {
-    let template = cache.get(appdata.Cache.keyTemplatePasswordChanged);
+    let template = cache.get(this.getAppData().Cache.keyTemplatePasswordChanged);
 
     if (template) {
       resolve(template);
@@ -63,7 +63,7 @@ function getTemplatePasswordChanged() {
         else {
           try {
             template = data.toString();
-            cache.put(appdata.Cache.keyTemplatePasswordChanged, template);
+            cache.put(this.getAppData().Cache.keyTemplatePasswordChanged, template);
             resolve(template);
           }
           catch (error) {
@@ -100,7 +100,7 @@ function getResponse(code, message, data, locale) {
 function getResponseOk(message, data, locale) {
   var response = {};
 
-  response.code = appdata.AppConfig.codeOk;
+  response.code = this.getAppData().AppConfig.codeOk;
   response.message = (locale ? localeService.translate(message, locale) : message);
   response.data = {};
   if (data) { response.data = data; }
@@ -111,7 +111,7 @@ function getResponseOk(message, data, locale) {
 function getResponseError(message, data, locale) {
   var response = {};
 
-  response.code = appdata.AppConfig.codeError;
+  response.code = this.getAppData().AppConfig.codeError;
   response.message = (locale ? localeService.translate(message, locale) : message);
   response.data = {};
   if (data) { response.data = data; }
