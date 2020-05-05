@@ -1,7 +1,6 @@
 node_modules/
 logs/
 uploads/
-data/appdata-dev.js
 token
 .DS_Store
 .idea
