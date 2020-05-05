@@ -1,5 +1,8 @@
 node_modules/
 uploads/
+log/*.json
+log/*.log
+log/*.gz
 token
 .DS_Store
 .idea
