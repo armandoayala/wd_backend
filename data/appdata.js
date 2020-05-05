@@ -26,7 +26,7 @@ module.exports = {
       password: process.env.EMAIL_PASSWORD
     },
     admin_user: {
-      create: false,
+      create: process.env.ADMIN_CREATE,
       name: "Administrator",
       surname: "Admin",
       password: process.env.ADMIN_PASSWORD,
