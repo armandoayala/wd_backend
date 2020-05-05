@@ -1,5 +1,7 @@
 node_modules/
-logs/
+logs/*.json
+logs/*.log
+logs/*.gz
 uploads/
 data/appdata-dev.js
 token
