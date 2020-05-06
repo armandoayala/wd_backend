@@ -13,7 +13,7 @@ var logger={};
 
 function createLogger()
 {
-  var transportRollingFile = new (winston.transports.DailyRotateFile)(helper.getAppData().AppConfig.logger);
+  /*var transportRollingFile = new (winston.transports.DailyRotateFile)(helper.getAppData().AppConfig.logger);
 
   logger = winston.createLogger({
       format: combine(
@@ -29,9 +29,19 @@ function createLogger()
 
   if (helper.getAppData().AppConfig.NODE_ENV !== 'PROD') {
       logger.add(new winston.transports.Console());
-  }
+  }*/
+  logger = winston.createLogger({
+    format: combine(
+      label({ label: 'workdesk' }),
+      timestamp(),
+      splat(),
+      myFormat
+      ),
+      transports: []
+        });
 
-  //console.log("BASEAPP: Logger creado con éxito");
+    logger.add(new winston.transports.Console());
+  
 }
 
 function getLogger()
