@@ -4,7 +4,7 @@ module.exports = {
     jwt_secret: process.env.JWT_SECRET,
     timezone: process.env.TIME_ZONE,
     formatDate: process.env.FORMAT_DATE,
-    NODE_ENV: process.env.NODE_ENV,
+    NODE_ENV: process.env.NODE_ENV || "DEV",
     codeOk: "0",
     codeError: "1",
     recoveryPasswordRandomCode: process.env.RECOVER_PASS_RANDOM_CODE,

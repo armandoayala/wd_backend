@@ -13,9 +13,7 @@ const moment = require('moment-timezone');
 const randomInt = require('random-int');
 const localeService = require('./localeservice');
 
-const app_env = require('../data/app-env');
-const appdata_prod = require('../data/appdata-prod');
-const appdata_dev = require('../data/appdata-dev');
+const appdata = require('../appdata');
 var templatePasswordChanged;
 
 function getTemplateRecoveryPassword() {
@@ -77,12 +75,7 @@ function getTemplatePasswordChanged() {
 }
 
 function getAppData() {
-  if (app_env.APP_ENV.ENV === "DEV") {
-    return appdata_dev;
-  }
-  else {
-    return appdata_prod;
-  }
+  return appdata;
 }
 
 function getResponse(code, message, data, locale) {
@@ -196,7 +189,7 @@ function createUserAdmin() {
       reject({
         create: null,
         user: null,
-        message: "Error en creacion de usuario Admin: "+error
+        message: "Error en creacion de usuario Admin: " + error
       });
     }
   });

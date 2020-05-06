@@ -3,6 +3,7 @@ uploads/
 log/*.json
 log/*.log
 log/*.gz
+.env
 token
 .DS_Store
 .idea

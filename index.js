@@ -4,15 +4,11 @@ const mongoose=require('mongoose');
 const app=require('./app');
 const helper=require('./services/helper');
 const applogger=require('./services/applogger');
-//const data = require('./data/appdata-prod');
 const port=process.env.PORT || 3788;
-//var port=process.env.PORT;//Toma el valor de una variable del sistema
-
 
 mongoose.Promise=global.Promise;
 
 //START APP
-//mongoose.connect(data.AppConfig.db_conn,{ useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true  })
 mongoose.connect(helper.getAppData().AppConfig.db_conn,{ useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true  })
           .then(()=>{
              //console.log("BASEAPP: La conexión a la BD se ha realizado correctamente - BD "+data.AppConfig.db_conn);
