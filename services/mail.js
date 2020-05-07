@@ -1,104 +1,84 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
-var helper=require('./helper');
-var applogger=require('./applogger');
-var util=require('util');
+var helper = require('./helper');
+var applogger = require('./applogger');
+var util = require('util');
 
+sgMail.setApiKey(helper.getAppData().AppConfig.mail.SENDGRID_API_KEY);
 
-function sendMail(mailOptions)
-{
-  /*
-  const mailOptions = {
-  from: 'sender@email.com', // sender address
-  to: 'to@email.com', // list of receivers
-  subject: 'Subject of your email', // Subject line
-  html: '<p>Your html here</p>'// plain text body
- };
-  */
+function sendMail(mailOptions) {
 
-var transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-        user: helper.getAppData().AppConfig.mail.user,
-        pass: helper.getAppData().AppConfig.mail.password
+  var msg = {
+    to: mailOptions.to,
+    from: {
+      email: helper.getAppData().AppConfig.mail.user,
+      name: helper.getAppData().AppConfig.APP_NAME
     },
-  tls: { rejectUnauthorized: false }
+    subject: mailOptions.subject,
+    html: mailOptions.content
+  };
+
+
+  return new Promise((resolve, reject) => {
+    sgMail.send(msg).then((sent) => {
+      applogger.info(applogger.infoMessage("Se envio correo", sent));
+      resolve(sent);
+    })
+    .catch((err) => {
+        applogger.error(applogger.errorMessage(err, "Error al enviar correo"));
+        reject(err);
+      });
   });
 
-
-
- return new Promise((resolve, reject)=>{
-   transporter.sendMail(mailOptions, function (err, info) {
-     if(err)
-     {
-       applogger.error(applogger.errorMessage(err,"Error al enviar correo"));
-       transporter.close();
-       reject(err);
-     }
-     else
-     {
-       applogger.info(applogger.infoMessage("Se envio correo",info));
-       transporter.close();
-       resolve(info);
-     }
-   });
-
-
- });
-
 }
 
-function sendMailRecoveryPassword(addressTo,userevent)
-{
+function sendMailRecoveryPassword(addressTo, userevent) {
 
   return helper.getTemplateRecoveryPassword()
-        .then(template=>{
+    .then(template => {
 
-          var message=(helper.getAppData().AppConfig.recoveryPasswordRandomCode==true) ? util.format(template,userevent.url,userevent.code) : util.format(template,userevent.url);
+      var message = (helper.getAppData().AppConfig.recoveryPasswordRandomCode == true) ? util.format(template, userevent.url, userevent.code) : util.format(template, userevent.url);
 
-          const mailOptions = {
-              from: 'support@workdesk.com', // sender address
-              to: addressTo, // list of receivers
-              subject: helper.getAppData().Constant.subjectRecoveryPassword, // Subject line
-              html: message// plain text body
-           };
+      const mailOptions = {
+        to: addressTo, // list of receivers
+        subject: helper.getAppData().Constant.subjectRecoveryPassword, // Subject line
+        content: message// plain text body
+      };
 
-           return this.sendMail(mailOptions);
-        })
-        .catch(err=>{
-          applogger.error(applogger.errorMessage(err,"Error leyendo template para correo recovery password"));
-          throw err;
-        });
+      return this.sendMail(mailOptions);
+    })
+    .catch(err => {
+      applogger.error(applogger.errorMessage(err, "Error leyendo template para correo recovery password"));
+      throw err;
+    });
 
 }
 
-function sendMailPasswordChanged(user)
-{
+function sendMailPasswordChanged(user) {
 
   return helper.getTemplatePasswordChanged()
-        .then(template=>{
+    .then(template => {
 
-          var message=util.format(template,user.name,user.surname);
+      var message = util.format(template, user.name, user.surname);
 
-          const mailOptions = {
-              from: 'support@workdesk.com', // sender address
-              to: user.email, // list of receivers
-              subject: helper.getAppData().Constant.subjectPasswordChanged, // Subject line
-              html: message// plain text body
-           };
+      const mailOptions = {
+        to: user.email, // list of receivers
+        subject: helper.getAppData().Constant.subjectPasswordChanged, // Subject line
+        content: message// plain text body
+      };
 
-           return this.sendMail(mailOptions);
-        })
-        .catch(err=>{
-          applogger.error(applogger.errorMessage(err,"Error leyendo template para correo password changed"));
-          throw err;
-        });
+      return this.sendMail(mailOptions);
+    })
+    .catch(err => {
+      applogger.error(applogger.errorMessage(err, "Error leyendo template para correo password changed"));
+      throw err;
+    });
 
 }
 
 
 
-module.exports=
+module.exports =
 {
   sendMail,
   sendMailRecoveryPassword,

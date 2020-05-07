@@ -12,6 +12,7 @@ module.exports = {
     maxValueRandomCode: 9999,
     amountTimeExpireCode: 5,
     unitTimExpireCode: "minutes",
+    APP_NAME: "WORKDESK",
     logger: {
       filename: "workdesk-%DATE%.log",
       dirname: process.env.LOGGER_DIR,
@@ -21,9 +22,8 @@ module.exports = {
       maxFiles: "5"
     },
     mail: {
-      service: process.env.EMAIL_SERVICE,
       user: process.env.EMAIL_USER,
-      password: process.env.EMAIL_PASSWORD
+      SENDGRID_API_KEY: process.env.SENDGRID_API_KEY
     },
     admin_user: {
       create: process.env.ADMIN_CREATE,
