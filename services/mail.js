@@ -37,7 +37,7 @@ function sendMailRecoveryPassword(addressTo, userevent) {
   return helper.getTemplateRecoveryPassword()
     .then(template => {
 
-      var message = (helper.getAppData().AppConfig.recoveryPasswordRandomCode == true) ? util.format(template, userevent.url, userevent.code) : util.format(template, userevent.url);
+      var message = (helper.getAppData().AppConfig.recoveryPasswordRandomCode == "1") ? util.format(template, userevent.url, userevent.code) : util.format(template, userevent.url);
 
       const mailOptions = {
         to: addressTo, // list of receivers

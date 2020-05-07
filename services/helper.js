@@ -24,7 +24,7 @@ function getTemplateRecoveryPassword() {
       resolve(template);
     }
     else {
-      var pathFileTemplate = (this.getAppData().AppConfig.recoveryPasswordRandomCode == true) ? pathfileTRPasswordRandomCode : pathfileTRPassword;
+      var pathFileTemplate = (this.getAppData().AppConfig.recoveryPasswordRandomCode == "1") ? pathfileTRPasswordRandomCode : pathfileTRPassword;
 
       fs.readFile(pathFileTemplate, (err, data) => {
         if (err) {
