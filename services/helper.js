@@ -215,7 +215,6 @@ function getCurrentDate() {
 
 function formatDateToTimeZone(date) {
   return moment(date).tz(this.getAppData().AppConfig.timezone).format(this.getAppData().AppConfig.formatDate);
-  //return moment(date).tz(this.getAppData().AppConfig.timezone).format();
 }
 
 function setAuditDateInEntity(entityToSet, updateDatesOnly) {
@@ -251,6 +250,69 @@ function getUserWithIdFromRequest(req) {
 
 }
 
+function removeItemInArray(array, fnPredicate) {
+  if (array == null || array.length == 0) {
+    return array;
+  }
+
+  return array.filter(function (item) {
+    return fnPredicate(item);
+  });
+}
+
+function getConfigToFindByFilter(req, objQueryFilter) {
+  var objConfig = {
+    pageOptions: {},
+    filter: {},
+    queryRegex: null,
+    sort: null
+  };
+
+  var entityReqFilter = req.body;
+
+  objConfig.pageOptions = {
+    page: parseInt(req.query.page, 10) || 0,
+    limit: parseInt(req.query.limit, 10) || parseInt(this.getAppData().AppConfig.limitDefaultFindPerPage, 10)
+  };
+
+  if (entityReqFilter && entityReqFilter.filter) {
+
+    //Enabled
+    if (typeof (entityReqFilter.filter.enabled) !== 'undefined') {
+      objConfig.filter.enabled = entityReqFilter.filter.enabled;
+    }
+
+    var colExtraFiltersQuery = [];
+
+    //Extra filters
+    if (entityReqFilter.filter.extras != null) {
+      colExtraFiltersQuery = entityReqFilter.filter.extras;
+    }
+
+    //Query
+    if (typeof (entityReqFilter.filter.query) !== 'undefined') {
+      objConfig.queryRegex = new RegExp(entityReqFilter.filter.query, 'i');
+
+      if (objQueryFilter.operator == "AND") {
+        objConfig.filter.$and = objQueryFilter.fnBuild(objConfig.queryRegex);
+        objConfig.filter.$and= [...objConfig.filter.$and,...colExtraFiltersQuery];
+      }
+      else {
+        objConfig.filter.$or = objQueryFilter.fnBuild(objConfig.queryRegex);
+        objConfig.filter.$or= [...objConfig.filter.$or,...colExtraFiltersQuery];
+      }
+    }
+  }
+
+  if (entityReqFilter != null && entityReqFilter.sort && entityReqFilter.sort != null) {
+    objConfig.sort = entityReqFilter.sort;
+  }
+
+  objConfig.filter.user = req.user.sub;
+  return objConfig;
+
+}
+
 module.exports =
 {
   getResponse,
@@ -267,5 +329,7 @@ module.exports =
   randomIntCode,
   getRecoveryPasswordURL,
   getTemplatePasswordChanged,
-  getUserWithIdFromRequest
+  getUserWithIdFromRequest,
+  removeItemInArray,
+  getConfigToFindByFilter
 }

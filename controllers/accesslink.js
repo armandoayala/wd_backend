@@ -89,6 +89,12 @@ function update(req,res)
    var entityToUpdate=req.body;
 
    Accesslink.findOne({ $and: [ { title: { $eq: entityToUpdate.title } }, { _id: { $ne: req.params.id } } ] } ,(err,entityFound)=>{
+        if(err)
+        {
+          applogger.error(applogger.errorMessage(err,"Error al comprobar en BD"));
+          return res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_CHECK_DB",null,req.locale));
+        } 
+    
         if(entityFound)
         {
           res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_ACCESSLINK_TITLE_EXISTS",null,req.locale));
@@ -131,6 +137,7 @@ function deleteOperation(req,res)
        applogger.error(applogger.errorMessage(err,"Error al eliminar"));
        return res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_DELETE",null,req.locale));
      }
+
      else
      {
        if(entityRemoved)

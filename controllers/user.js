@@ -216,35 +216,6 @@ function login(req,res)
 
 }
 
-/*function getLogin(req,res)
-{
-  var login = new Login();
-  var params = req.body;
-
-  var paramToken = params.token;
-
-  Login.findOne({token:paramToken},(err,loginFound)=>{
-     if(err)
-     {
-       res.status(500).send({message:'Error al buscar login en BD: '+err});
-     }
-     else
-     {
-       if(loginFound)
-       {
-         res.status(200).send(loginFound);
-       }
-       else
-       {
-         res.status(404).send({message:'Login token no existe'});
-       }
-     }
-
-
-  });
-
-}*/
-
 function updateUser(req,res)
 {
    var userId=req.params.id;

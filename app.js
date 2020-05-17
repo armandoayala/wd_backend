@@ -25,6 +25,7 @@ var user_routes = require('./routes/user');
 var manage_routes = require('./routes/manage');
 var transaction_routes = require('./routes/transaction');
 var accesslink_routes = require('./routes/accesslink');
+var wdproject_routes = require('./routes/wdproject');
 
 //*****middlewares de body-parser*****
 app.use(bodyParser.urlencoded({extended:false}));
@@ -45,6 +46,7 @@ app.use('/api/workdesk/user',user_routes);
 app.use('/api/workdesk/manage',manage_routes);
 app.use('/api/workdesk/transaction',transaction_routes);
 app.use('/api/workdesk/accesslink',accesslink_routes);
+app.use('/api/workdesk/wdproject',wdproject_routes);
 
 
 //*******Export module*************

@@ -1,10 +1,10 @@
 {
-  "Hello": "Hello",
+	"Hello": "Hello",
 	"ERROR_CHECK_DB": "Error checking in BD",
 	"ERROR_SAVE": "Save failed",
 	"ERROR_UPDATE": "Update failed",
-  "ERROR_DELETE": "Delete failed",
-  "ERROR_FIND": "Find failed",
+	"ERROR_DELETE": "Delete failed",
+	"ERROR_FIND": "Find failed",
 	"ERROR_INVALID_FILE_EXTENSION": "Invalid file extension",
 	"ERROR_FILE_NOT_DELETED": "File not deleted",
 	"ERROR_FILE_NOT_UPLOADED": "Files not uploaded",
@@ -23,12 +23,14 @@
 	"ERROR_USUARIO_RECOVERY_PASSWORD": "Error in sending mail for password recovery",
 	"ERROR_EVENT_RECOVERYPASSWORD_FIND": "Error searching for password change event with specified code and email",
 	"ERROR_EVENT_RECOVERYPASSWORD_CODE_EXPIRED": "Password change code has expired",
-  "ERROR_ACCESSLINK_TITLE_EXISTS": "Quick access title already exists",
-  "ERROR_ACCESSLINK_NOT_FOUND": "Access link not found",
-  "SUCCESS_EVENT_RECOVERYPASSWORD": "Password update successful",
+	"ERROR_ACCESSLINK_TITLE_EXISTS": "Quick access title already exists",
+	"ERROR_ACCESSLINK_NOT_FOUND": "Access link not found",
+	"SUCCESS_EVENT_RECOVERYPASSWORD": "Password update successful",
 	"SUCCESS_EVENT_RECOVERYPASSWORD_NOTSENDMAIL": "Password update successful but the notification email could not be sent",
 	"SUCCESS_USUARIO_RECOVERY_PASSWORD": "Password recovery email sent successfully",
 	"MENSAJE_SUCCESS": "Successful action",
 	"MENSAJE_SUCCESS_SAVE": "Successful registration",
-  "MENSAJE_NOT_FOUND_RESULTS": "Not found results"
+	"MENSAJE_NOT_FOUND_RESULTS": "Not found results",
+	"ERROR_WDPROJECT_EXISTS": "A WDProject with the entered name already exists",
+	"ERROR_ENTITY_NOT_FOUND": "Record to update not found"
 }
