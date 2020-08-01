@@ -217,12 +217,17 @@ function formatDateToTimeZone(date) {
   return moment(date).tz(this.getAppData().AppConfig.timezone).format(this.getAppData().AppConfig.formatDate);
 }
 
-function setAuditDateInEntity(entityToSet, updateDatesOnly) {
+function setAuditDateInEntity(entityToSet, updateDatesOnly=false,deleteDatesOnly=false) {
   var currentMoment = this.getCurrentMomentWithFeatures();
 
   if (updateDatesOnly) {
     entityToSet.updatedDate = currentMoment.moment;
     entityToSet.updatedUnix = currentMoment.unix;
+  }
+  else if(deleteDatesOnly)
+  {
+    entityToSet.deletedDate = currentMoment.moment;
+    entityToSet.deletedUnix = currentMoment.unix;
   }
   else {
     entityToSet.createdDate = currentMoment.moment;
@@ -277,9 +282,9 @@ function getConfigToFindByFilter(req, objQueryFilter) {
 
   if (entityReqFilter && entityReqFilter.filter) {
 
-    //Enabled
-    if (typeof (entityReqFilter.filter.enabled) !== 'undefined') {
-      objConfig.filter.enabled = entityReqFilter.filter.enabled;
+    //Status
+    if (entityReqFilter.filter.status!=null && typeof (entityReqFilter.filter.status) !== 'undefined') {
+      objConfig.filter.status = entityReqFilter.filter.status;
     }
 
     var colExtraFiltersQuery = [];
@@ -290,7 +295,7 @@ function getConfigToFindByFilter(req, objQueryFilter) {
     }
 
     //Query
-    if (typeof (entityReqFilter.filter.query) !== 'undefined') {
+    if (entityReqFilter.filter.query!=null && typeof (entityReqFilter.filter.query) !== 'undefined') {
       objConfig.queryRegex = new RegExp(entityReqFilter.filter.query, 'i');
 
       if (objQueryFilter.operator == "AND") {

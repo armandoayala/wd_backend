@@ -11,7 +11,7 @@ api.post('/create',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectControlle
 api.put('/update/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.update);
 api.post('/wddata/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.addWDData);
 api.delete('/wddata/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.removeWDData);
-api.delete('/delete/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.deleteOperation);
+api.delete('/delete/:id/:type',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.deleteOperation);
 api.post('/find',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.findByFilter);
 api.get('/find/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.findById);
 

@@ -9,12 +9,14 @@ var WDProjectSchema = Schema({
   name: String,
   note: String,
   href: String,
-  enabled: Boolean,
+  status: String,
   data:[WDDataSchema],
   createdDate: Date,
   updatedDate: Date,
+  deletedDate: Date,
   createdUnix: Number,
   updatedUnix: Number,
+  deletedUnix: Number,
   user: {type:Schema.ObjectId,ref:'User'}
 });
 

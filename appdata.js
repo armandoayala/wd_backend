@@ -62,15 +62,23 @@ module.exports = {
       pais: "EEUU"
     }
   },
-  state: {
+  Status: {
     activo: {
       id: "1",
+      code:"ACTIVE",
       name: "Activo",
       type: "GENERAL"
     },
     inactivo: {
       id: "2",
+      code:"INACTIVE",
       name: "Inactivo",
+      type: "GENERAL"
+    },
+    eliminado: {
+      id: "3",
+      code:"DELETED",
+      name: "Eliminado",
       type: "GENERAL"
     }
 

@@ -21,7 +21,7 @@ async function save(req, res) {
     wdProject.note = "";
     wdProject.href = "";
     wdProject.data = [];
-    wdProject.enabled = true;
+    wdProject.status = helper.getAppData().Status.activo.code;
     wdProject.user = helper.getUserWithIdFromRequest(req);
     wdProject = helper.setAuditDateInEntity(wdProject, false);
 
@@ -121,9 +121,26 @@ async function removeWDData(req, res) {
 
 async function deleteOperation(req, res) {
   var entityId = req.params.id;
+  var type = req.params.type;
 
   try {
-    const entityRemoved = await WDProject.findByIdAndRemove(entityId);
+    let entityRemoved;
+    if(type=='wd-del-1')
+    {
+      entityRemoved = await WDProject.findByIdAndRemove(entityId);
+    }
+    else
+    {
+      entityRemoved = await WDProject.findOne({ _id: { $eq: entityId } });
+
+      if(entityRemoved)
+      {
+        entityRemoved = helper.setAuditDateInEntity(entityRemoved, false,true);
+        entityRemoved.status=helper.getAppData().Status.eliminado.code;;
+        entityRemoved = await WDProject.findByIdAndUpdate(req.params.id, entityRemoved, { new: true });    
+      }
+    }
+    
 
     if (entityRemoved) {
       return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", entityRemoved, req.locale));
@@ -153,7 +170,6 @@ async function findByFilter(req, res) {
                                                           }
                                                         });
 
-
     WDProject.find(objConfigToFind.filter)
       .sort((objConfigToFind.sort == null ? { name: 'asc' } : objConfigToFind.sort))
       .skip(objConfigToFind.pageOptions.page * objConfigToFind.pageOptions.limit)
@@ -166,7 +182,7 @@ async function findByFilter(req, res) {
         }
 
         if (docs) {
-          return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", docs, req.locale));
+          return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS",{hasMore: objConfigToFind.pageOptions.limit==docs.length, result: docs}, req.locale));
         }
         else {
           return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("MENSAJE_NOT_FOUND_RESULTS", null, req.locale));
