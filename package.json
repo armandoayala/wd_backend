@@ -10,7 +10,7 @@
   "author": "Armando Ayala",
   "license": "MIT",
   "dependencies": {
-    "@sendgrid/mail": "^7.1.0",
+    "@sendgrid/mail": "^7.2.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.19.0",
     "connect-multiparty": "^2.2.0",
@@ -18,12 +18,12 @@
     "express": "^4.17.1",
     "i18n": "^0.8.6",
     "jwt-simple": "^0.5.6",
-    "moment": "^2.25.3",
-    "moment-timezone": "^0.5.28",
-    "mongoose": "^5.9.12",
+    "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31",
+    "mongoose": "^5.9.27",
     "node-cache": "^4.2.1",
     "random-int": "^2.0.1",
-    "winston": "^3.2.1",
+    "winston": "^3.3.3",
     "winston-daily-rotate-file": "^3.10.0"
   },
   "devDependencies": {
