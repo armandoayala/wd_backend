@@ -14,5 +14,7 @@ api.delete('/wddata/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectCon
 api.delete('/delete/:id/:type',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.deleteOperation);
 api.post('/find',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.findByFilter);
 api.get('/find/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.findById);
+api.put('/activate/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.activate);
+api.put('/inactivate/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.inactivate);
 
 module.exports = api;

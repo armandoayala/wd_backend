@@ -10,6 +10,7 @@ var WDProjectSchema = Schema({
   note: String,
   href: String,
   status: String,
+  client: String,
   data:[WDDataSchema],
   createdDate: Date,
   updatedDate: Date,

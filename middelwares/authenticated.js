@@ -9,7 +9,7 @@ exports.ensureAuth=function(req,res,next)
 {
   if(!req.headers.authorization)
   {
-    return res.status(403).send({message:'Peticion no autorizada'});
+    return res.status(401).send({message:'Peticion no autorizada'});
   }
 
   var token = req.headers.authorization.replace(/['"]+/g,'');
@@ -26,7 +26,7 @@ exports.ensureAuth=function(req,res,next)
   }catch(ex)
   {
     applogger.error(applogger.errorMessage(ex,"Error en ensureAuth"));
-    return res.status(404).send({message:'Token no valido'});
+    return res.status(401).send({message:'Token no valido'});
   }
 
   req.user=payload;

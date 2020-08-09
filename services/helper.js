@@ -217,15 +217,14 @@ function formatDateToTimeZone(date) {
   return moment(date).tz(this.getAppData().AppConfig.timezone).format(this.getAppData().AppConfig.formatDate);
 }
 
-function setAuditDateInEntity(entityToSet, updateDatesOnly=false,deleteDatesOnly=false) {
+function setAuditDateInEntity(entityToSet, updateDatesOnly = false, deleteDatesOnly = false) {
   var currentMoment = this.getCurrentMomentWithFeatures();
 
   if (updateDatesOnly) {
     entityToSet.updatedDate = currentMoment.moment;
     entityToSet.updatedUnix = currentMoment.unix;
   }
-  else if(deleteDatesOnly)
-  {
+  else if (deleteDatesOnly) {
     entityToSet.deletedDate = currentMoment.moment;
     entityToSet.deletedUnix = currentMoment.unix;
   }
@@ -283,7 +282,7 @@ function getConfigToFindByFilter(req, objQueryFilter) {
   if (entityReqFilter && entityReqFilter.filter) {
 
     //Status
-    if (entityReqFilter.filter.status!=null && typeof (entityReqFilter.filter.status) !== 'undefined') {
+    if (entityReqFilter.filter.status != null && typeof (entityReqFilter.filter.status) !== 'undefined') {
       objConfig.filter.status = entityReqFilter.filter.status;
     }
 
@@ -295,18 +294,29 @@ function getConfigToFindByFilter(req, objQueryFilter) {
     }
 
     //Query
-    if (entityReqFilter.filter.query!=null && typeof (entityReqFilter.filter.query) !== 'undefined') {
+    if (entityReqFilter.filter.query != null && typeof (entityReqFilter.filter.query) !== 'undefined') {
       objConfig.queryRegex = new RegExp(entityReqFilter.filter.query, 'i');
 
       if (objQueryFilter.operator == "AND") {
         objConfig.filter.$and = objQueryFilter.fnBuild(objConfig.queryRegex);
-        objConfig.filter.$and= [...objConfig.filter.$and,...colExtraFiltersQuery];
+        objConfig.filter.$and = [...objConfig.filter.$and, ...colExtraFiltersQuery];
       }
       else {
         objConfig.filter.$or = objQueryFilter.fnBuild(objConfig.queryRegex);
-        objConfig.filter.$or= [...objConfig.filter.$or,...colExtraFiltersQuery];
+        objConfig.filter.$or = [...objConfig.filter.$or, ...colExtraFiltersQuery];
       }
     }
+    else if (colExtraFiltersQuery.length > 0) {
+      if (objQueryFilter.operator == "AND") {
+        objConfig.filter.$and = []
+        objConfig.filter.$and = [...objConfig.filter.$and, ...colExtraFiltersQuery];
+      }
+      else {
+        objConfig.filter.$or = []
+        objConfig.filter.$or = [...objConfig.filter.$or, ...colExtraFiltersQuery];
+      }
+    }
+
   }
 
   if (entityReqFilter != null && entityReqFilter.sort && entityReqFilter.sort != null) {

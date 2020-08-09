@@ -19,7 +19,8 @@ async function save(req, res) {
   try {
     wdProject.name = params.name.toUpperCase();
     wdProject.note = "";
-    wdProject.href = "";
+    wdProject.href = params.href;
+    wdProject.client = params.client;
     wdProject.data = [];
     wdProject.status = helper.getAppData().Status.activo.code;
     wdProject.user = helper.getUserWithIdFromRequest(req);
@@ -125,22 +126,19 @@ async function deleteOperation(req, res) {
 
   try {
     let entityRemoved;
-    if(type=='wd-del-1')
-    {
+    if (type == 'wd-del-1') {
       entityRemoved = await WDProject.findByIdAndRemove(entityId);
     }
-    else
-    {
+    else {
       entityRemoved = await WDProject.findOne({ _id: { $eq: entityId } });
 
-      if(entityRemoved)
-      {
-        entityRemoved = helper.setAuditDateInEntity(entityRemoved, false,true);
-        entityRemoved.status=helper.getAppData().Status.eliminado.code;;
-        entityRemoved = await WDProject.findByIdAndUpdate(req.params.id, entityRemoved, { new: true });    
+      if (entityRemoved) {
+        entityRemoved = helper.setAuditDateInEntity(entityRemoved, false, true);
+        entityRemoved.status = helper.getAppData().Status.eliminado.code;
+        entityRemoved = await WDProject.findByIdAndUpdate(req.params.id, entityRemoved, { new: true });
       }
     }
-    
+
 
     if (entityRemoved) {
       return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", entityRemoved, req.locale));
@@ -155,20 +153,58 @@ async function deleteOperation(req, res) {
   }
 }
 
+async function activate(req, res) {
+  var dateAudit = helper.getCurrentMomentWithFeatures();
+
+  try {
+    const resUpd = await WDProject.findByIdAndUpdate({ _id: req.params.id }, { updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix, status: helper.getAppData().Status.activo.code }, { new: true });
+    if (resUpd) {
+      return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.data, req.locale));
+    }
+    else {
+      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_ENTITY_NOT_FOUND", null, req.locale));
+    }
+  }
+  catch (err) {
+    applogger.error(applogger.errorMessage(err, "Error al actualizar"));
+    return res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_UPDATE", null, req.locale));
+  }
+}
+
+async function inactivate(req, res) {
+  var dateAudit = helper.getCurrentMomentWithFeatures();
+
+  try {
+    const resUpd = await WDProject.findByIdAndUpdate({ _id: req.params.id }, { updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix, status: helper.getAppData().Status.inactivo.code }, { new: true });
+    if (resUpd) {
+      return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.data, req.locale));
+    }
+    else {
+      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_ENTITY_NOT_FOUND", null, req.locale));
+    }
+  }
+  catch (err) {
+    applogger.error(applogger.errorMessage(err, "Error al actualizar"));
+    return res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_UPDATE", null, req.locale));
+  }
+}
+
 async function findByFilter(req, res) {
 
   try {
 
     var objConfigToFind = helper.getConfigToFindByFilter(req,
-                                                        {
-                                                          operator:"OR",
-                                                          fnBuild:(queryRegex)=>{
-                                                            return [
-                                                              { name: queryRegex },
-                                                              { note: queryRegex }
-                                                            ];
-                                                          }
-                                                        });
+      {
+        operator: "OR",
+        fnBuild: (queryRegex) => {
+          return [
+            { name: queryRegex },
+            { client: queryRegex }
+          ];
+        }
+      });
+
+    let vCount= await WDProject.countDocuments(objConfigToFind.filter)  
 
     WDProject.find(objConfigToFind.filter)
       .sort((objConfigToFind.sort == null ? { name: 'asc' } : objConfigToFind.sort))
@@ -182,7 +218,7 @@ async function findByFilter(req, res) {
         }
 
         if (docs) {
-          return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS",{hasMore: objConfigToFind.pageOptions.limit==docs.length, result: docs}, req.locale));
+          return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", { count: vCount, hasMore: objConfigToFind.pageOptions.limit == docs.length, result: docs }, req.locale));
         }
         else {
           return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("MENSAJE_NOT_FOUND_RESULTS", null, req.locale));
@@ -223,5 +259,7 @@ module.exports =
   removeWDData,
   deleteOperation,
   findByFilter,
-  findById
+  findById,
+  activate,
+  inactivate
 };
