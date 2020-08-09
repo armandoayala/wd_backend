@@ -11,7 +11,7 @@ var WDProjectSchema = Schema({
   href: String,
   status: String,
   client: String,
-  data:[WDDataSchema],
+  wddata:[WDDataSchema],
   createdDate: Date,
   updatedDate: Date,
   deletedDate: Date,

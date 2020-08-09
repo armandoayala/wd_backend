@@ -57,6 +57,7 @@ async function update(req, res) {
   var entityToUpdate = req.body;
 
   try {
+
     const entFound = await WDProject.findOne({ $and: [{ name: { $eq: entityToUpdate.name } }, { _id: { $ne: req.params.id } }] });
     if (entFound) {
       return res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError(MSG_ERROR_ENTITY_EXISTS, null, req.locale));
