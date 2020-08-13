@@ -85,10 +85,10 @@ async function addWDData(req, res) {
   var dateAudit = helper.getCurrentMomentWithFeatures();
 
   try {
-    const resUpd = await WDProject.findByIdAndUpdate({ _id: req.params.id }, { updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix, $push: { data: entityToAdd } }, { new: true });
+    const resUpd = await WDProject.findByIdAndUpdate({ _id: req.params.id }, { updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix, $push: { wddata: entityToAdd } }, { new: true });
 
     if (resUpd) {
-      return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.data, req.locale));
+      return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.wddata, req.locale));
     }
     else {
       return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_ENTITY_NOT_FOUND", null, req.locale));
@@ -107,9 +107,9 @@ async function removeWDData(req, res) {
   var dateAudit = helper.getCurrentMomentWithFeatures();
 
   try {
-    const resUpd = await WDProject.findByIdAndUpdate({ _id: req.params.id }, { updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix, $pull: { data: { _id: entityToRemove.id } } }, { new: true });
+    const resUpd = await WDProject.findByIdAndUpdate({ _id: req.params.id }, { updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix, $pull: { wddata: { _id: entityToRemove.id } } }, { new: true });
     if (resUpd) {
-      return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.data, req.locale));
+      return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.wddata, req.locale));
     }
     else {
       return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_ENTITY_NOT_FOUND", null, req.locale));
@@ -205,7 +205,7 @@ async function findByFilter(req, res) {
         }
       });
 
-    let vCount= await WDProject.countDocuments(objConfigToFind.filter)  
+    let vCount = await WDProject.countDocuments(objConfigToFind.filter)
 
     WDProject.find(objConfigToFind.filter)
       .sort((objConfigToFind.sort == null ? { name: 'asc' } : objConfigToFind.sort))

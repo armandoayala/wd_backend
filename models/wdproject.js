@@ -1,9 +1,9 @@
 'use strict'
 
-var mongoose=require('mongoose');
+var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var WDDataSchema = new Schema({ name: String, value: String, isHref: Boolean, encode: Boolean });
+var WDDataSchema = new Schema({ name: String, value: String, url: String, isHref: Boolean, encode: Boolean });
 
 var WDProjectSchema = Schema({
   name: String,
@@ -11,14 +11,14 @@ var WDProjectSchema = Schema({
   href: String,
   status: String,
   client: String,
-  wddata:[WDDataSchema],
+  wddata: [WDDataSchema],
   createdDate: Date,
   updatedDate: Date,
   deletedDate: Date,
   createdUnix: Number,
   updatedUnix: Number,
   deletedUnix: Number,
-  user: {type:Schema.ObjectId,ref:'User'}
+  user: { type: Schema.ObjectId, ref: 'User' }
 });
 
-module.exports=mongoose.model('WDProject',WDProjectSchema);
+module.exports = mongoose.model('WDProject', WDProjectSchema);
