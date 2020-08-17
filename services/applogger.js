@@ -80,7 +80,7 @@ function error(message)
 {
   if(message && logger)
   {
-    logger.error(formatObject(message));
+    logger.info(formatObject(message));
   }
 }
 

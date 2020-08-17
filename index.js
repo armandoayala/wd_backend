@@ -11,13 +11,12 @@ mongoose.Promise=global.Promise;
 //START APP
 mongoose.connect(helper.getAppData().AppConfig.db_conn,{ useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true  })
           .then(()=>{
+
+            applogger.createLogger();
              //console.log("BASEAPP: La conexión a la BD se ha realizado correctamente - BD "+data.AppConfig.db_conn);
              helper.createUserAdmin().then(res=>{
 
-               //console.log("BASEAPP: "+res.message);
-               applogger.createLogger();
-
-
+               
                app.listen(port,()=>{
                  //console.log("BASEAPP: Servidor local ejecutando con exito - PORT "+port);
                  applogger.info("La conexión a la BD se ha realizado correctamente - BD "+helper.getAppData().AppConfig.db_conn);
