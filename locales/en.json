@@ -32,5 +32,6 @@
 	"MENSAJE_SUCCESS_SAVE": "Successful registration",
 	"MENSAJE_NOT_FOUND_RESULTS": "Not found results",
 	"ERROR_WDPROJECT_EXISTS": "A WDProject with the entered name already exists",
-	"ERROR_ENTITY_NOT_FOUND": "Record to update not found"
+	"ERROR_ENTITY_NOT_FOUND": "Record to update not found",
+	"ERROR_WDPROJECT_WDDATA_EXISTS": "A Data with the entered name already exists"
 }

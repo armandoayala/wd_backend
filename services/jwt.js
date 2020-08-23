@@ -4,7 +4,7 @@ var jwt=require('jwt-simple');
 var moment=require('moment');
 var helper=require('./helper');
 
-exports.createToken=function(user)
+function createToken (user)
 {
   var payload=
   {
@@ -19,4 +19,28 @@ exports.createToken=function(user)
   };
 
   return jwt.encode(payload,helper.getAppData().AppConfig.jwt_secret);
+};
+
+function encodeWDData (wdProjectId,wdProjectName,value)
+{
+  var payload=
+  {
+    sub:wdProjectId,
+    name:wdProjectName,
+    data:value
+  };
+
+  return jwt.encode(payload,helper.getAppData().AppConfig.jwt_secret);
+};
+
+function decodeWDData (data)
+{
+  return jwt.decode(data,helper.getAppData().AppConfig.jwt_secret);
+};
+
+module.exports =
+{
+  createToken,
+  encodeWDData,
+  decodeWDData
 };

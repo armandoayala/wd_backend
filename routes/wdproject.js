@@ -16,5 +16,8 @@ api.post('/find',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.
 api.get('/find/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.findById);
 api.put('/activate/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.activate);
 api.put('/inactivate/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.inactivate);
+api.post('/decode-wddata/:id',[mdAuth.ensureAuth,mdAppSettings.settings],WDProjectController.decodeWDData);
+api.post('/test-encode',WDProjectController.testEncode);
+api.post('/test-decode/:vdata',WDProjectController.testDecode);
 
 module.exports = api;

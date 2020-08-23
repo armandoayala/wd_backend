@@ -35,7 +35,8 @@ module.exports = {
       image: null
     },
     urlRecoveryPassword: process.env.URL_RECOVER_PASSWORD,
-    limitDefaultFindPerPage: process.env.LIMIT_DEFAULT_FIND_PERPAGE
+    limitDefaultFindPerPage: process.env.LIMIT_DEFAULT_FIND_PERPAGE,
+    encode_iterations: process.env.ENCODE_ITERATIONS,
   },
   AppRole: {
     Admin: process.env.ADMIN_ROLE

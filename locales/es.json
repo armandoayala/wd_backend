@@ -32,5 +32,6 @@
 	"MENSAJE_SUCCESS_SAVE": "Registro exitoso",
 	"MENSAJE_NOT_FOUND_RESULTS": "No se han encontrado resultados",
 	"ERROR_WDPROJECT_EXISTS": "Ya existe un WDProject con el nombre ingresado",
-	"ERROR_ENTITY_NOT_FOUND": "Registro para actualización no encontrado"
+	"ERROR_ENTITY_NOT_FOUND": "Registro para actualización no encontrado",
+	"ERROR_WDPROJECT_WDDATA_EXISTS": "Ya existe un Dato con el nombre ingresado"
 }
