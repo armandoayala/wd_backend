@@ -1,20 +1,5 @@
 'use strict'
 
-var path=require('path');
-const APP_ENV=process.env.NODE_ENV || "DEV";
-
-if (APP_ENV !== 'production'
-   && APP_ENV !== 'PROD') {
-	
-	var result = require('dotenv').config({path: path.join(__dirname, '/.env')});
- 
-	if (result.error) {
-	throw result.error
-	}
-	
-	console.info("[APP] - ENV DEV LOAD SUCCESSFUL");
-}
-
 var express=require('express');
 var bodyParser=require('body-parser');
 
