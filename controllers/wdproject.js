@@ -1,6 +1,6 @@
 'use strict'
 
-var bcrypt= require('bcrypt-nodejs');
+var bcrypt = require('bcrypt-nodejs');
 
 //modelos
 var ObjectId = require('mongoose').Types.ObjectId;
@@ -10,7 +10,7 @@ var WDProject = require('../models/wdproject');
 //servicios
 var helper = require('../services/helper');
 var applogger = require('../services/applogger');
-var encoder=require('../services/encoder');
+var encoder = require('../services/encoder');
 
 //Mensajes
 const MSG_ERROR_ENTITY_EXISTS = "ERROR_WDPROJECT_EXISTS";
@@ -89,20 +89,80 @@ async function addWDData(req, res) {
 
   try {
 
-    entityToAdd.name=entityToAdd.name.toUpperCase()
-    const entWDataFound = await WDProject.find({ $and: [{ 'wddata.name': entityToAdd.name }, { _id: req.params.id  }] });
+    entityToAdd.name = entityToAdd.name.toUpperCase()
+    const entWDataFound = await WDProject.find({ $and: [{ 'wddata.name': entityToAdd.name }, { _id: req.params.id }] });
 
-    if(entWDataFound && entWDataFound.length > 0)
-    {
-      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_WDPROJECT_WDDATA_EXISTS", null, req.locale)); 
+    if (entWDataFound && entWDataFound.length > 0) {
+      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_WDPROJECT_WDDATA_EXISTS", null, req.locale));
     }
 
-    if(entityToAdd.encode)
-    {
-      entityToAdd.value=encoder.encode(req.params.id,entityToAdd.name,entityToAdd.value);
+    if (entityToAdd.encode) {
+      entityToAdd.value = encoder.encode(req.params.id, entityToAdd.name, entityToAdd.value);
     }
 
     const resUpd = await WDProject.findByIdAndUpdate({ _id: req.params.id }, { updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix, $push: { wddata: entityToAdd } }, { new: true });
+
+    if (resUpd) {
+      return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.wddata, req.locale));
+    }
+    else {
+      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_ENTITY_NOT_FOUND", null, req.locale));
+    }
+  }
+  catch (err) {
+    applogger.error(applogger.errorMessage(err, "Error al actualizar"));
+    return res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_UPDATE", null, req.locale));
+  }
+
+}
+
+async function updateWDData(req, res) {
+  var entityToAdd = req.body;
+  var dateAudit = helper.getCurrentMomentWithFeatures();
+
+  try {
+
+    entityToAdd.name = entityToAdd.name.toUpperCase()
+
+    const entWDataProjectFound = await WDProject.findOne({ _id: req.params.id });
+
+    if (!entWDataProjectFound) {
+      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_ENTITY_NOT_FOUND", null, req.locale));
+    }
+
+    //Load Entity saved
+    var entWDataSaved = entWDataProjectFound.wddata.find(item => item._id == req.params.wddid);
+    if (!entWDataSaved) {
+      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_ENTITY_NOT_FOUND", null, req.locale));
+    }
+
+    //Validate WdData in Project
+    var wdDataFound = entWDataProjectFound.wddata.find(item => item.name == entityToAdd.name && item._id != req.params.wddid);
+    if (wdDataFound) {
+      return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_WDPROJECT_WDDATA_EXISTS", null, req.locale));
+    }
+
+    //Validate encode rules
+    if (entWDataSaved.encode) {
+      if (entityToAdd.encode && entityToAdd.value != entWDataSaved.value) {
+        entityToAdd.value = encoder.encode(req.params.id, entityToAdd.name, entityToAdd.value);
+      }
+
+      if (!entityToAdd.encode && entityToAdd.value == entWDataSaved.value) {
+        entityToAdd.value = encoder.decode(entityToAdd.value);
+      }
+    }
+
+    if (!entWDataSaved.encode && entityToAdd.encode) {
+      entityToAdd.value = encoder.encode(req.params.id, entityToAdd.name, entityToAdd.value);
+    }
+
+    //Update
+    const resUpd = await WDProject.updateOne({ _id: req.params.id, "wddata._id": req.params.wddid }, {
+      updatedDate: dateAudit.moment, updatedUnix: dateAudit.unix,
+      $set: { "wddata.$.name": entityToAdd.name, "wddata.$.value": entityToAdd.value, "wddata.$.url": entityToAdd.url, "wddata.$.isHref": entityToAdd.isHref, "wddata.$.encode": entityToAdd.encode, "wddata.$.description": entityToAdd.description }
+    },
+      { new: true });
 
     if (resUpd) {
       return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", resUpd.wddata, req.locale));
@@ -276,52 +336,45 @@ async function decodeWDData(req, res) {
     const wdProjectFound = await WDProject.findById(req.params.id);
     if (wdProjectFound) {
 
-      if(wdProjectFound.wddata==null || wdProjectFound.wddata.length==0)
-      {
+      if (wdProjectFound.wddata == null || wdProjectFound.wddata.length == 0) {
         return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", [], req.locale));
       }
 
       //Find User to Validate Password
-      const userFound= await User.findById(req.user.sub)
-      
-      if(!userFound)
-      {
-        return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_USUARIO_NOT_EXISTS", null, req.locale));  
+      const userFound = await User.findById(req.user.sub)
+
+      if (!userFound) {
+        return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_USUARIO_NOT_EXISTS", null, req.locale));
       }
 
-      bcrypt.compare(bodyData.code,userFound.password,(err,check)=>{
-        if(err)
-        {
-          applogger.error(applogger.errorMessage(err,"Error al check usuario en BD"));
-          res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_CHECK_DB",null,req.locale));
+      bcrypt.compare(bodyData.code, userFound.password, (err, check) => {
+        if (err) {
+          applogger.error(applogger.errorMessage(err, "Error al check usuario en BD"));
+          res.status(helper.getAppData().HttpStatus.internal_error_server).send(helper.getResponseError("ERROR_CHECK_DB", null, req.locale));
         }
-        else
-        {
-          if(!check)
-          {
-            res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_USUARIO_NOT_EXISTS",null,req.locale));
+        else {
+          if (!check) {
+            res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("ERROR_USUARIO_NOT_EXISTS", null, req.locale));
           }
-          else
-          {
-            var wdDataResult=[]
-            
+          else {
+            var wdDataResult = []
+
             for (var i = 0; i < wdProjectFound.wddata.length; i++) {
-              
-              let entityWDData=wdProjectFound.wddata[i]
-              if(entityWDData.encode)
-              {
-                let decodeData=encoder.decode(entityWDData.value)
-                entityWDData.value=decodeData.data
+
+              let entityWDData = wdProjectFound.wddata[i]
+              if (entityWDData.encode) {
+                let decodeData = encoder.decode(entityWDData.value)
+                entityWDData.value = decodeData.data
               }
-              
-              wdDataResult=[...wdDataResult,entityWDData]
+
+              wdDataResult = [...wdDataResult, entityWDData]
             }
             return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", wdDataResult, req.locale));
           }
         }
 
       });
-      
+
     }
     else {
       return res.status(helper.getAppData().HttpStatus.not_found).send(helper.getResponseError("MENSAJE_NOT_FOUND_RESULTS", null, req.locale));
@@ -334,13 +387,12 @@ async function decodeWDData(req, res) {
   }
 }
 
-async function testEncode(req, res)
-{
-  var entityToAdd = req.body;  
+async function testEncode(req, res) {
+  var entityToAdd = req.body;
 
   try {
 
-    var encodedValue=encoder.encode("100","CursoML",entityToAdd.value)
+    var encodedValue = encoder.encode("100", "CursoML", entityToAdd.value)
 
     return res.status(helper.getAppData().HttpStatus.success).send(helper.getResponseOk("MENSAJE_SUCCESS", encodedValue, req.locale));
   }
@@ -350,8 +402,7 @@ async function testEncode(req, res)
   }
 }
 
-async function testDecode(req, res)
-{
+async function testDecode(req, res) {
   try {
 
     var decodedData = encoder.decode(req.params.vdata)
@@ -377,5 +428,6 @@ module.exports =
   inactivate,
   testEncode,
   testDecode,
-  decodeWDData
+  decodeWDData,
+  updateWDData
 };

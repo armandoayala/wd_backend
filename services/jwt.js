@@ -15,7 +15,7 @@ function createToken (user)
     role:user.role,
     imagen:user.image,
     iat:moment().unix(),
-    exp:moment().add(1,'days').unix()
+    exp:moment().add(helper.getAppData().AppConfig.jwt_minutes_expire,'minutes').unix()
   };
 
   return jwt.encode(payload,helper.getAppData().AppConfig.jwt_secret);

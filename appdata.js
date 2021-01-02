@@ -2,6 +2,7 @@ module.exports = {
   AppConfig: {
     db_conn: process.env.MONGODB_URI,
     jwt_secret: process.env.JWT_SECRET,
+    jwt_minutes_expire: process.env.JWT_MINUTES_EXPIRE,
     timezone: process.env.TIME_ZONE,
     formatDate: process.env.FORMAT_DATE,
     NODE_ENV: process.env.NODE_ENV || "DEV",

@@ -3,7 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var WDDataSchema = new Schema({ name: String, value: String, url: String, isHref: Boolean, encode: Boolean });
+var WDDataSchema = new Schema({ name: String, value: String, url: String, isHref: Boolean, encode: Boolean, description: String });
 
 var WDProjectSchema = Schema({
   name: String,
