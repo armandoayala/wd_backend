@@ -7,12 +7,15 @@ var applogger=require('../services/applogger');
 
 exports.ensureAuth=function(req,res,next)
 {
-  if(!req.headers.authorization)
+  if(!req.headers.authorization ||
+    !req.headers.authorization.startsWith(helper.getAppData().AppConfig.jwt_token_prefix))
   {
     return res.status(401).send({message:'Peticion no autorizada'});
   }
 
   var token = req.headers.authorization.replace(/['"]+/g,'');
+  token = token.replace(helper.getAppData().AppConfig.jwt_token_prefix,""); 
+
 
   try
   {

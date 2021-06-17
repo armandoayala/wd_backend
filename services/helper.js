@@ -4,10 +4,12 @@
 const bcrypt = require('bcrypt-nodejs');
 const User = require('../models/user');
 const fs = require('fs');
+const { uuid } = require('uuidv4');
 
 const pathfileTRPassword = "./data/templateRecoveryPassword.txt";
 const pathfileTRPasswordRandomCode = "./data/templateRecoveryPasswordRandomCode.txt";
 const pathfileTPasswordChanged = "./data/templatePasswordChanged.txt";
+const pathfileTWelcomeUser = "./data/templateWelcomeUser.txt";
 const cache = require('./cache');
 const moment = require('moment-timezone');
 const randomInt = require('random-int');
@@ -62,6 +64,34 @@ function getTemplatePasswordChanged() {
           try {
             template = data.toString();
             cache.put(this.getAppData().Cache.keyTemplatePasswordChanged, template);
+            resolve(template);
+          }
+          catch (error) {
+            reject(error);
+          }
+        }
+      });
+    }
+
+  });
+}
+
+function getTemplateWelcomeUser() {
+  return new Promise((resolve, reject) => {
+    let template = cache.get(this.getAppData().Cache.keyTemplateWelcomeUser);
+
+    if (template) {
+      resolve(template);
+    }
+    else {
+      fs.readFile(pathfileTWelcomeUser, (err, data) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          try {
+            template = data.toString();
+            cache.put(this.getAppData().Cache.keyTemplateWelcomeUser, template);
             resolve(template);
           }
           catch (error) {
@@ -242,8 +272,16 @@ function randomIntCode(min, max) {
   return randomInt(min, max);
 }
 
+function uuidCode() {
+  return uuid();
+}
+
 function getRecoveryPasswordURL() {
   return this.getAppData().AppConfig.urlRecoveryPassword;
+}
+
+function getWelcomeUserURL(userId, codeAuth) {
+  return this.getAppData().AppConfig.urlWelcomeUser + "/" + userId + "/" + codeAuth;
 }
 
 function getUserWithIdFromRequest(req) {
@@ -346,5 +384,8 @@ module.exports =
   getTemplatePasswordChanged,
   getUserWithIdFromRequest,
   removeItemInArray,
-  getConfigToFindByFilter
+  getConfigToFindByFilter,
+  getWelcomeUserURL,
+  getTemplateWelcomeUser,
+  uuidCode
 }

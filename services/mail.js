@@ -8,23 +8,24 @@ sgMail.setApiKey(helper.getAppData().AppConfig.mail.SENDGRID_API_KEY);
 
 function sendMail(mailOptions) {
 
+  console.log(JSON.stringify(helper.getAppData().AppConfig.mail))
+  console.log("EMAIL FROM: " + helper.getAppData().AppConfig.mail.SENDGRID_EMAIL_USER)
+
   var msg = {
     to: mailOptions.to,
     from: {
-      email: helper.getAppData().AppConfig.mail.user,
-      name: helper.getAppData().AppConfig.APP_NAME
+      email: helper.getAppData().AppConfig.mail.SENDGRID_EMAIL_USER
     },
     subject: mailOptions.subject,
     html: mailOptions.content
   };
-
 
   return new Promise((resolve, reject) => {
     sgMail.send(msg).then((sent) => {
       applogger.info(applogger.infoMessage("Se envio correo", sent));
       resolve(sent);
     })
-    .catch((err) => {
+      .catch((err) => {
         applogger.error(applogger.errorMessage(err, "Error al enviar correo"));
         reject(err);
       });
@@ -76,11 +77,33 @@ function sendMailPasswordChanged(user) {
 
 }
 
+function sendMailWelcomeUser(addressTo, userEntity) {
 
+  return helper.getTemplateWelcomeUser()
+    .then(template => {
+
+      var urlParsed = helper.getWelcomeUserURL(userEntity._id, userEntity.codeAuth);
+      var message = util.format(template, urlParsed);
+
+      const mailOptions = {
+        to: addressTo, // list of receivers
+        subject: helper.getAppData().Constant.subjectWelcomeUser, // Subject line
+        content: message// plain text body
+      };
+
+      return this.sendMail(mailOptions);
+    })
+    .catch(err => {
+      applogger.error(applogger.errorMessage(err, "Error leyendo template para welcome user"));
+      throw err;
+    });
+
+}
 
 module.exports =
 {
   sendMail,
   sendMailRecoveryPassword,
-  sendMailPasswordChanged
+  sendMailPasswordChanged,
+  sendMailWelcomeUser
 }

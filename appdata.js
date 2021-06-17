@@ -3,12 +3,14 @@ module.exports = {
     db_conn: process.env.MONGODB_URI,
     jwt_secret: process.env.JWT_SECRET,
     jwt_minutes_expire: process.env.JWT_MINUTES_EXPIRE,
+    jwt_token_prefix: "Bearer ",
     timezone: process.env.TIME_ZONE,
     formatDate: process.env.FORMAT_DATE,
     NODE_ENV: process.env.NODE_ENV || "DEV",
     codeOk: "0",
     codeError: "1",
     recoveryPasswordRandomCode: process.env.RECOVER_PASS_RANDOM_CODE,
+    sendEmailConfirmUser: process.env.SEND_EMAIL_CONFIRM_USER,
     minValueRandomCode: 1000,
     maxValueRandomCode: 9999,
     amountTimeExpireCode: 5,
@@ -23,7 +25,7 @@ module.exports = {
       maxFiles: "5"
     },
     mail: {
-      user: process.env.EMAIL_USER,
+      SENDGRID_EMAIL_USER: process.env.SENDGRID_EMAIL_USER,
       SENDGRID_API_KEY: process.env.SENDGRID_API_KEY
     },
     admin_user: {
@@ -36,6 +38,7 @@ module.exports = {
       image: null
     },
     urlRecoveryPassword: process.env.URL_RECOVER_PASSWORD,
+    urlWelcomeUser: process.env.URL_WELCOME_USER,
     limitDefaultFindPerPage: process.env.LIMIT_DEFAULT_FIND_PERPAGE,
     encode_iterations: process.env.ENCODE_ITERATIONS,
   },
@@ -82,15 +85,23 @@ module.exports = {
       code:"DELETED",
       name: "Eliminado",
       type: "GENERAL"
+    },
+    pendiente_confirm: {
+      id: "4",
+      code:"PENDING_CONFIRMATION",
+      name: "Pendiente confirmacion",
+      type: "GENERAL"
     }
 
   },
   Constant: {
     subjectRecoveryPassword: "WORKDESK - Password recovery request",
-    subjectPasswordChanged: "WORKDESK - Password changed"
+    subjectPasswordChanged: "WORKDESK - Password changed",
+    subjectWelcomeUser: "WORKDESK - Welcome - Confirmation email"
   },
   Cache: {
     keyTemplateRecoveryPassword: "key_0",
-    keyTemplatePasswordChanged: "key_1"
+    keyTemplatePasswordChanged: "key_1",
+    keyTemplateWelcomeUser: "key_2"
   }
 };

@@ -19,6 +19,7 @@ api.post('/upload-image/:id',[mdAuth.ensureAuth,mdAppSettings.settings,md_upload
 api.get('/get-image/:imageFile',[mdAuth.ensureAuth,mdAppSettings.settings],UserController.getImageFile);
 api.get('/filter-by-role/:role',[mdAuth.ensureAuth,mdAppSettings.settings],UserController.getUsersByRole);
 api.post('/login',mdAppSettings.settings,UserController.login);
+api.put('/confirm-user/:id/:code',mdAppSettings.settings,UserController.confirmUser);
 api.post('/recovery-password',mdAppSettings.settings,UserController.recoveryPassword);
 api.post('/change-password',mdAppSettings.settings,UserController.changePassword);
 

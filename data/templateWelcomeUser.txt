@@ -1,0 +1,11 @@
+<h2>WORKDESK - Email confirmation</h2>
+  <h3>Bienvenido/a a WORKDESK!</h3>
+
+  <p>Para terminar con el proceso de registro,
+     por favor haga click sobre el siguiente link para confirmar su
+     dirección de correo electrónico:
+  </p>
+  
+  <p><a href="%s">LINK - Email confirmation</a>.</p>
+  
+<p><i>Muchas gracias, WORKDESK Team</i></p>

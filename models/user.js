@@ -10,7 +10,9 @@ var UserSchema = Schema({
   password: String,
   image: String,
   role: String,
-  locale: String
+  locale: String,
+  codeAuth: String,
+  status: String
 });
 
 module.exports=mongoose.model('User',UserSchema);

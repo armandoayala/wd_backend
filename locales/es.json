@@ -19,6 +19,7 @@
 	"ERROR_USUARIO_ENCRIPT_PASSWORD": "Error en encriptación de password",
 	"ERROR_USUARIO_LOGIN_SAVE": "Error al registrar login",
 	"ERROR_USUARIO_NOT_EXISTS": "Usuario no existe",
+	"ERROR_USUARIO_NOT_CONFIRM": "Usuario no ha confirmado email",
 	"ERROR_USUARIO_GET_BYUSER": "Error al filtrar usuario por rol",
 	"ERROR_USUARIO_RECOVERY_PASSWORD": "Error en envío de correo para recuperacion de password",
 	"ERROR_EVENT_RECOVERYPASSWORD_FIND": "Error al buscar evento de cambio de password con codigo y correo especificado",
@@ -33,5 +34,8 @@
 	"MENSAJE_NOT_FOUND_RESULTS": "No se han encontrado resultados",
 	"ERROR_WDPROJECT_EXISTS": "Ya existe un WDProject con el nombre ingresado",
 	"ERROR_ENTITY_NOT_FOUND": "Registro para actualización no encontrado",
-	"ERROR_WDPROJECT_WDDATA_EXISTS": "Ya existe un Dato con el nombre ingresado"
+	"ERROR_WDPROJECT_WDDATA_EXISTS": "Ya existe un Dato con el nombre ingresado",
+	"ERROR_WDKNOWLEDGE_EXISTS": "Ya existe un WDKnowledge con el nombre ingresado",
+	"ERROR_DATA_NOT_VALID": "Datos no válidos",
+	"WDKNOW_TAG_ALREADY_EXISTS": "Tag ya existe"
 }
