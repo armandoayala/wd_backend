@@ -4,7 +4,7 @@
   "description": "Back end para aplicacion work desk",
   "main": "index.js",
   "scripts": {
-    "start": "env-cmd -f ./config/dev.env --no-override nodemon index.js",
+    "start": "env-cmd -f ./config/prod.env --no-override node index.js",
     "dev": "env-cmd -f ./config/dev.env --no-override node index.js",
     "test": "env-cmd -f ./config/test.env --no-override node index.js",
     "prod": "env-cmd -f ./config/prod.env --no-override node index.js"
